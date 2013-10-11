@@ -43,8 +43,9 @@ module Jekyll
 
         dw.add_observer do |*args|
           t = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+          changes = args.map(&:path)
           print Jekyll.logger.formatted_topic("Regenerating:") + "#{args.size} files at #{t} "
-          self.process_site(site)
+          self.process_site(site, changes)
           puts  "...done."
         end
 

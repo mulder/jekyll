@@ -37,12 +37,12 @@ module Jekyll
     # Public: Read, process, and write this Site to output.
     #
     # Returns nothing.
-    def process
+    def process(changes = [])
       self.reset
       self.read
       self.generate
-      self.render
-      self.cleanup
+      self.render(changes)
+      self.cleanup if changes.empty?
       self.write
     end
 
@@ -222,13 +222,22 @@ module Jekyll
     # Render the site to the destination.
     #
     # Returns nothing.
-    def render
+    def render(changes = [])
       payload = site_payload
-      self.posts.each do |post|
+
+      posts = self.posts
+      pages = self.pages
+
+      unless changes.empty?
+        posts.delete_if {|p| !changes.any? {|change| change.match(%r{#{p.path}$}) } }
+        pages.delete_if {|p| !changes.any? {|change| change.match(%r{#{p.path}$}) } }
+      end
+
+      posts.each do |post|
         post.render(self.layouts, payload)
       end
 
-      self.pages.each do |page|
+      pages.each do |page|
         relative_permalinks_deprecation_method if page.uses_relative_permalinks
         page.render(self.layouts, payload)
       end

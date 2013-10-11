@@ -14,8 +14,8 @@ module Jekyll
     # site - the Jekyll::Site object
     #
     # Returns nothing
-    def self.process_site(site)
-      site.process
+    def self.process_site(site, changes = [])
+      site.process(changes)
     rescue Jekyll::FatalException => e
       puts
       Jekyll.logger.error "ERROR:", "YOUR SITE COULD NOT BE BUILT:"
